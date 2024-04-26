@@ -17,8 +17,8 @@ MIN_LENGTH = 150
 MAX_PRECEED = 40
 # PREFIXES = {'Col', 'Councillor', 'Dr', 'Lecturer', 'Maj', 'Mr', 'Mrs', 'Ms', 'Prof', 'Professor', 'Professsor'} # change back to set()
 
-COMMON_CRAWL_URL = 'https://commoncrawl.s3.amazonaws.com/'
-
+# COMMON_CRAWL_URL = 'https://commoncrawl.s3.amazonaws.com/'
+COMMON_CRAWL_URL='https://data.commoncrawl.org/'
 parser = ArgumentParser()
 parser.add_argument('wetpaths',
                     help='common_crawl date like 2017-43 (see http://commoncrawl.org/the-data/get-started/ ) *or* a path to a -wet.paths file')
@@ -35,6 +35,24 @@ parser.add_argument("-p", "--parallel", dest="parallel", type=int, default=0,
                     help="number of parallel threads", metavar="N")
 
 args = parser.parse_args()
+
+# Move the log file name definition here, right after parsing the arguments
+def log(text):
+    try:
+        if not text.endswith("\n"):
+            text += "\n"
+        with open(log_fname, "a") as f:
+            f.write(text)
+    except Exception as e:
+        print("*** Unable to log!")
+        print(e)
+output_fname = args.output or "output_bios.pkl"  # Assuming a default name if none is provided
+log_fname = output_fname.replace("bios.pkl", "log.txt")
+
+try:
+    os.remove(log_fname)
+except FileNotFoundError:
+    pass  # If the file doesn't exist, we can safely ignore this error
 
 with open("freq_titles.json", "r") as f:
     freq_titles = json.load(f)
@@ -88,7 +106,8 @@ def extract_name(name):
         return None
     return tuple(g.strip().replace(".", "") if g else "" for g in match.groups())
 
-    
+
+
 
 def log(text):
     try:
