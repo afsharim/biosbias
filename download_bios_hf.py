@@ -5,7 +5,7 @@ import pickle
 print(datasets.__version__)
 
 try:
-    dataset = load_dataset("LabHC/bias_in_bios", use_auth_token="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")
+    dataset = load_dataset("LabHC/bias_in_bios", use_auth_token="?")
     all_data = concatenate_datasets([dataset['train'], dataset['test'], dataset['dev']])
 
     # Define the filename
