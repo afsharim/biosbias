@@ -1,17 +1,19 @@
-from datasets import load_dataset
+from datasets import load_dataset, concatenate_datasets
 import datasets
-print(datasets.__version__)
-
-dataset = load_dataset("LabHC/bias_in_bios",use_auth_token="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")
-
-# Combining the train, test, and dev splits
-all_data = dataset['train'].concatenate(dataset['test'], dataset['dev'])
-
 import pickle
 
-# Define the filename
-filename = 'BIOS.pkl'
+print(datasets.__version__)
 
-# Open a file in write-binary mode
-with open(filename, 'wb') as file:
-    pickle.dump(all_data, file)
+try:
+    dataset = load_dataset("LabHC/bias_in_bios", use_auth_token="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")
+    all_data = concatenate_datasets([dataset['train'], dataset['test'], dataset['dev']])
+
+    # Define the filename
+    filename = 'BIOS.pkl'
+
+    # Open a file in write-binary mode
+    with open(filename, 'wb') as file:
+        pickle.dump(all_data, file)
+    print("Dataset downloaded and saved successfully!")
+except Exception as e:
+    print("An error occurred:", str(e))
